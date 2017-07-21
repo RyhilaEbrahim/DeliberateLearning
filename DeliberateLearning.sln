@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliberateLearning", "DeliberateLearning\DeliberateLearning\DeliberateLearning.csproj", "{7E7A88AA-0700-4C6E-AD39-6071BFE61C91}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliberateLearning", "DeliberateLearning\DeliberateLearning.csproj", "{7E7A88AA-0700-4C6E-AD39-6071BFE61C91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliberateLearning.Test", "DeliberateLearning.Test\DeliberateLearning.Test.csproj", "{869A40E2-6F25-4858-B640-45349E1A58CB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeliberateLearning.Tests", "DeliberateLearning.Tests\DeliberateLearning.Tests.csproj", "{869A40E2-6F25-4858-B640-45349E1A58CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,5 +1,5 @@
 {
-  "name": "Please set your own project name here",
+  "name": "DeliberateLearning",
   "scripts":{
     "test": "gulp test-dotnet"
   },
