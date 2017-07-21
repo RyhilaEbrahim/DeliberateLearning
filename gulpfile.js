@@ -1,56 +1,66 @@
-var gulp = require('gulp');
+/*
+ * Welcome new user! To get started, ensure that you have copied
+ * the start/packages.json alongside this file, in the root of your repo.
+ * Then do:
+ * > npm install
+ * After that, you can:
+ * > node node_modules/gulp/bin/gulp.js
+ * OR, install gulp globally:
+ * > npm install -g gulp
+ * and then you can just:
+ * > gulp
+ * I HIGHLY recommend using the first method at your build server
+ *
+ * To add or change tasks, do so one task per file in the gulp-tasks folder
+ */
+var fs = require('fs'),
+    debug = require('debug')('gulpfile'),
+    gulpTasksFolder = 'gulp-tasks'; // if you cloned elsewhere, you'll need to modify this
+    requireModule = global.requireModule = function(module) {
+        var modulePath = ['.', gulpTasksFolder, 'modules', module].join('/');
+        return require(modulePath);
+    },
+    importNpmTasks = requireModule("import-npm-tasks");
 
-gulp.task('default', []);
-gulp.task('ci', []);
+if (!fs.existsSync('package.json')) {
+    ['You\'re nearly there!',
+     'Please copy the package.json from the start folder alongside your gulpfile.js',
+     'then run `npm install` to install the required packages'].forEach(function(s) {
+        console.log(s);
+     });
+    process.exit(1);
+}
+try {
+    importNpmTasks();
+    var requireDir = require('require-dir');
+    requireDir('gulp-tasks');
+    ['override-tasks', 'local-tasks'].forEach(function(dirname) {
+        if (fs.existsSync(dirname)) {
+            requireDir(dirname);
+        }
+    });
+} catch (e) {
+    if (shouldDump(e)) {
+      console.error(e);
+    } else {
+      if (!process.env.DEBUG) {
+        console.log("Error occurred. For more info, set the DEBUG environment variable (eg set DEBUG=*).")
+      }
+    }
+    process.exit(1);
+}
 
+function shouldDump(e) {
+  return process.env.ALWAYS_DUMP_GULP_ERRORS || probablyNotReportedByGulp(e);
+}
 
-// Return a stream so gulp can determine completion
-gulp.task('clean', function() {
-    return gulp
-        .src('DeliberateLearning/DeliberateLearning/bin/*.*', { read: false })
-        .pipe(clean());
-});
-
-// OR
-
-// Take in the gulp callback and call it when done
-gulp.task('clean', function(callback) {
-    gulp.src('DeliberateLearning/DeliberateLearning/bin/*.*', { read: false })
-        .pipe(clean());
-    callback();
-});
-
-// Specify the dependencies in the second parameter
-gulp.task('build', ['clean'], function() {
-    // Build...
-});
-
-var args = require('yargs').argv,
-    assemblyInfo = require('gulp-dotnet-assembly-info');
-
-gulp.task('assemblyInfo', function() {
-    return gulp
-        .src('**/AssemblyInfo.cs')
-        .pipe(assemblyInfo({
-            version: 1,
-            fileVersion: 1,
-            company: 'moo',
-            copyright: function(value) { 
-                return value + '-' + new Date().getFullYear(); 
-            }
-        }))
-        .pipe(gulp.dest('.'));
-});
-
-var msbuild = require('gulp-msbuild');
-
-gulp.task('build', ['assemblyInfo'], function() {
-    return gulp
-        .src('**/*.sln')
-        .pipe(msbuild({
-            toolsVersion: 12.0,
-            targets: ['Clean', 'Build'],
-            errorOnFail: true,
-            stdout: true
-        }));
-});
+function probablyNotReportedByGulp(e) {
+  var message = (e || "").toString().toLowerCase();
+  return [
+    "cannot find module",
+    "referenceerror",
+    "syntaxerror"
+  ].reduce((acc, cur) => {
+    return acc || message.indexOf(cur) > -1;
+  }, false);
+}
